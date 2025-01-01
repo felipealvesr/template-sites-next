@@ -1,48 +1,59 @@
-"use client";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import styles from "./styles.module.scss";
-import { X, Menu } from "lucide-react";
+"use client"
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import styles from './styles.module.scss'
 
-export function Submenu() {
+import { X, Menu} from "lucide-react"
+import { MenuProps } from '@/utils/menu.type'
+
+interface SubMenuProp{
+  menu: MenuProps
+}
+
+export function Submenu({ menu }: SubMenuProp){
   const [isOpen, setIsOpen] = useState(false);
-
+  
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
+      if(window.innerWidth > 768){
         setIsOpen(false);
       }
-    };
+    }
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize)
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isOpen]);
+    return () => window.removeEventListener("resize", handleResize)
 
-  function toggleMenu() {
+  }, [])
+
+  function toggleMenu(){
     setIsOpen(!isOpen);
   }
 
-  return (
+  return(
     <section className={styles.submenu}>
       <div className={styles.submenuIcon} onClick={toggleMenu}>
         <Menu size={34} color="#121212" />
-        Menu
+        Serviços
       </div>
+
       <ul className={`${styles.ul} ${isOpen ? styles.open : ""}`}>
+
         {isOpen && (
-            <button>
-                <X size={54} color="#121212" onClick={toggleMenu} className={styles.closeButton} />
-            </button>
+          <button onClick={toggleMenu} className={styles.closeButton}>
+            <X size={54} color="#121212" />
+          </button>
         )}
 
-        <li>
-          <Link href="/post/pagina-1">Pagina 1</Link>
-        </li>
-        <li>
-          <Link href="/post/pagina-2">Pagina 2</Link>
-        </li>
+
+        {menu.objects.map( item => (
+          <li key={item.slug}>
+            <Link href={`/post/${item.slug}`}>
+              {item.title}
+            </Link>
+          </li>
+        ))}
       </ul>
     </section>
-  );
+  )
 }
